@@ -31,3 +31,11 @@ Statistics& Statistics::operator+=(const Statistics& st){
     this->letters += st.letters;
     return *this;
 }
+
+bool Statistics::operator==(const Statistics& st){
+    return this->files == st.files &&
+            this->non_empty_lines == st.non_empty_lines &&
+            this->empty_lines == st.empty_lines &&
+            this->words == st.words &&
+            this->letters == st.letters;
+}

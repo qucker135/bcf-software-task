@@ -15,6 +15,7 @@ typedef struct Statistics{
     friend ostream& operator<<(ostream& os, const Statistics& st);
     Statistics operator+(const Statistics&);
     Statistics& operator+=(const Statistics&);
+    bool operator==(const Statistics&);
 }Statistics;
 
 #endif

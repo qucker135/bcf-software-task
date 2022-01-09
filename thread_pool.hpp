@@ -30,12 +30,20 @@ class ThreadPool{
     condition_variable jobs_cv;
     vector<thread> pool;
     atomic<bool> terminate_pool;
+    atomic<int> waitingThreads;
 
     void KeepWaitingForJobs();
 
     public:
     ThreadPool(int num_threads);
     ~ThreadPool();
+    int getWaitingThreads();
+    void addSingleThread();
+
+    //debug
+    int getNumberOfThreads(){
+        return pool.size();
+    }
 
     template <class T>
     auto addJob(T job) -> std::future<decltype(job())>
@@ -43,10 +51,9 @@ class ThreadPool{
         auto wrapper = std::make_shared<std::packaged_task<decltype(job()) ()>>(std::move(job));    
         {
             unique_lock<mutex> lock(jobs_queue_mutex);
-            //jobs_queue.push(job);
             
             jobs_queue.emplace([=]{
-                (*wrapper)(); //jutro sprobowac z decltype, jak sie nie uda, poddac się
+                (*wrapper)();
             });
             
         }

@@ -13,18 +13,21 @@ void ThreadPool::KeepWaitingForJobs(){
             Task job;
             {
                 unique_lock<mutex> lock(jobs_queue_mutex);
-                jobs_cv.wait(lock, [this](){
-                    return !jobs_queue.empty() || terminate_pool.load(); 
-                });
-
+                
+                if(jobs_queue.empty()){
+                    waitingThreads++;
+                    jobs_cv.wait(lock, [this](){
+                        return !jobs_queue.empty() || terminate_pool.load(); 
+                    });
+                    waitingThreads--;
+                }
+                
                 if(jobs_queue.empty() && terminate_pool.load()){
                     break;
                 }            
 
                 job = move(jobs_queue.front());
                 jobs_queue.pop();
-            
-                
             }
             job();
         }
@@ -32,6 +35,7 @@ void ThreadPool::KeepWaitingForJobs(){
 }
 
 ThreadPool::ThreadPool(int num_threads = thread::hardware_concurrency()){
+    waitingThreads = 0;
     terminate_pool = false;
     for(int i = 0; i < num_threads; ++i){
         pool.push_back(thread(&ThreadPool::KeepWaitingForJobs, this));
@@ -47,20 +51,10 @@ ThreadPool::~ThreadPool(){
     pool.clear();
 }
 
-/*
-template <class T>
-auto ThreadPool::addJob(T job) -> std::future<decltype(job())>{
-    auto wrapper = std::make_shared<std::packaged_task<decltype(job()) ()>>(std::move(job));    
-    {
-        unique_lock<mutex> lock(jobs_queue_mutex);
-        //jobs_queue.push(job);
-        
-        jobs_queue.emplace([=]{
-            (*wrapper)(); //jutro sprobowac z decltype, jak sie nie uda, poddac się
-        });
-        
-    }
-    jobs_cv.notify_one();
-    return wrapper->get_future();
+int ThreadPool::getWaitingThreads(){
+    return waitingThreads.load();
 }
-*/
+
+void ThreadPool::addSingleThread(){
+    pool.emplace_back(thread(&ThreadPool::KeepWaitingForJobs, this));
+}
