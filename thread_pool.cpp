@@ -56,5 +56,7 @@ int ThreadPool::getWaitingThreads(){
 }
 
 void ThreadPool::addSingleThread(){
-    pool.emplace_back(thread(&ThreadPool::KeepWaitingForJobs, this));
+    //pool.emplace_back(thread(&ThreadPool::KeepWaitingForJobs, this));
+    //std::thread t(&ThreadPool::KeepWaitingForJobs, this);
+    pool.push_back(std::thread(&ThreadPool::KeepWaitingForJobs, this));
 }

@@ -22,7 +22,7 @@ using std::fstream;
 int main(int argc, char *argv[]){
 	ThreadPool gtp(4);
 
-	DisplayDirTreeUsingThreadPool("./test-dir/dir1/outoftouch.txt", gtp);
+	DisplayDirTreeUsingThreadPool("./test-dir", gtp);
 	cout<<gtp.getNumberOfThreads()<<endl;
 	return 0;
 }

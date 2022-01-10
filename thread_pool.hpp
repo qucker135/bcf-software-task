@@ -7,6 +7,7 @@
 #include <atomic>
 #include <functional>
 #include <vector>
+#include <list>
 #include <queue>
 #include <future>
 
@@ -23,12 +24,13 @@ using std::unique_lock;
 
 using Task = std::function<void()>;
 
+using std::list;
 
 class ThreadPool{
     queue<Task> jobs_queue;
     mutex jobs_queue_mutex;
     condition_variable jobs_cv;
-    vector<thread> pool;
+    list<thread> pool;
     atomic<bool> terminate_pool;
     atomic<int> waitingThreads;
 

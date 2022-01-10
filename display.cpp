@@ -83,9 +83,7 @@ Statistics DisplayDirTreeUsingThreadPool(const std::string& pathName, ThreadPool
 				
 
 			}
-            if(tp.getWaitingThreads() == 0){
-					tp.addSingleThread();
-			}
+			
             if(tp.getWaitingThreads() == 0){
 					tp.addSingleThread();
 			}
