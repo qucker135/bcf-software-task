@@ -6,6 +6,7 @@
 #include "thread_pool.hpp"
 #include "staticstics.hpp"
 #include "display.hpp"
+#include "timer.hpp"
 
 namespace fs = std::filesystem;
 using std::cout;
@@ -19,10 +20,17 @@ using std::chrono::seconds;
 using std::chrono::milliseconds;
 using std::fstream;
 
-int main(int argc, char *argv[]){
-	ThreadPool gtp(4);
+const int num_threads = 1;
 
+int main(int argc, char *argv[]){
+	ThreadPool gtp(num_threads);
+	Timer timer;
+	timer.start();
 	DisplayDirTreeUsingThreadPool("./test-dir", gtp);
-	cout<<gtp.getNumberOfThreads()<<endl;
+	timer.stop();
+	cout<<"Benchmark results:"<<endl;
+	cout<<"Number of threads in the beginning: "<<num_threads<<endl;
+	cout<<"Number of threads in the end: "<<gtp.getNumberOfThreads()<<endl;
+	cout<<"Execution time: "<<timer.getTime()<<"s."<<endl;
 	return 0;
 }
