@@ -9,3 +9,9 @@ compile: main.cpp thread_pool.cpp staticstics.cpp display.cpp timer.cpp
 
 test-compile: test.cpp thread_pool.cpp staticstics.cpp display.cpp
 	${CC} ${LDFLAGSTEST} $^ -o test
+
+run: main
+	./main
+
+test-run: test
+	./test
